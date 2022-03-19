@@ -14,40 +14,46 @@ public class DeleteInstructorDetailDemo {
 
 		// create session factory
 		SessionFactory factory = new Configuration()
-								.configure("hibernate.cfg.xml")
-								.addAnnotatedClass(Instructor.class)
-								.addAnnotatedClass(InstructorDetail.class)
-								.buildSessionFactory();
-		
+				.configure("hibernate.cfg.xml")
+				.addAnnotatedClass(Instructor.class)
+				.addAnnotatedClass(InstructorDetail.class)
+				.buildSessionFactory();
+
 		// create session
 		Session session = factory.getCurrentSession();
-		
+
 		try {			
-			
+
 			// start a transaction
 			session.beginTransaction();
 
 			// get the instructor detail object
-			int theId = 2;
+			int theId = 3;
 			InstructorDetail tempInstructorDetail = 
 					session.get(InstructorDetail.class, theId);
-			
+
 			// print the instructor detail
 			System.out.println("tempInstructorDetail: " + tempInstructorDetail);
-						
+
 			// print  the associated instructor
 			System.out.println("the associated instructor: " + 
-								tempInstructorDetail.getInstructor());
-			
+					tempInstructorDetail.getInstructor());
+
 			// now let's delete the instructor detail
 			System.out.println("Deleting tempInstructorDetail: " 
-											+ tempInstructorDetail);
+					+ tempInstructorDetail);
+
+			// remove the associated object reference
+			// break bi-directional link
+
+			tempInstructorDetail.getInstructor().setInstructorDetail(null);
+
 
 			session.delete(tempInstructorDetail);
-			
+
 			// commit transaction
 			session.getTransaction().commit();
-			
+
 			System.out.println("Done!");
 		}
 		catch (Exception exc) {
@@ -56,7 +62,7 @@ public class DeleteInstructorDetailDemo {
 		finally {
 			// handle connection leak issue
 			session.close();
-			
+
 			factory.close();
 		}
 	}
